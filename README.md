@@ -1,2 +1,4 @@
 # ML-jazz-predictions
-ML-project for chord predictions with the Digital and Cognitive Musicology Lab at EPFL
+This project uses machine learning to predict the next chord in Jazz music.
+
+Made by Anmol, Nikunj and Oskar in collaboration with the Digital and Cognitive Musicology Lab at EPFL.
