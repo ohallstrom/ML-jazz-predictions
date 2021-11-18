@@ -85,3 +85,13 @@ def chord_to_hot(chord):
             chord_multi_hot[idx % 12] = 1
 
     return chord_multi_hot
+
+def multi_hot_to_int(multi_hot):
+    '''
+    Maps multi-hot representation to 
+    integer representation by interpretating
+    the multi_hot as a binary number. 
+    :param multi_hot: multi_hot representation of chord
+    :return: integer representation of chord
+    '''
+    return int("".join(str(x) for x in multi_hot), 2)
