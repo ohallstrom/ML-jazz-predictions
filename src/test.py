@@ -54,7 +54,7 @@ def test_multi_hot_to_int(ground_truth):
    Testes if the multi_hot_to_int
    function is correct according to
    the ground_truth
-   :param ground_truth: dict, maps str to correct multi-hot-representation
+   :param ground_truth: dict, maps multi-hot-representation to correct int
    '''
    print("Testing multi_hot_to_int")
    
