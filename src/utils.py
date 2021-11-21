@@ -19,7 +19,13 @@ quality_mappings = { # TODO: add potential other "qualities"
     "maj": np.array([4,7]),
     "sus": np.array([7]),
     "aug": np.array([4,8]),
-    "dim": np.array([3,6])
+    "dim": np.array([3,6]),
+    "o" : np.array([3,6]), #dimimnished
+    "j" : np.array([4,7]),#major
+    '+': np.array([4,8]),#augmented
+    '-': np.array([3,7]),#minor
+    
+    
 }
 
 step_mappings = { # TODO: add more?
@@ -39,7 +45,7 @@ def chord_to_hot(chord):
     ''' 
     # separate the root from the rest of the string
     if len(chord) > 1:
-        if chord[1] == 'b': # TODO: add character used for #
+        if chord[1] == 'b' or chord[1] == '#': # TODO: add character used for #
             chord_root = root_mappings[chord[:2]]
             chord_rest = chord[2:]
         else:
@@ -54,7 +60,7 @@ def chord_to_hot(chord):
     chord_steps = []
 
     for ch in chord_rest:
-        if ch.isalpha():
+        if ch.isalpha():  # TODO : change to include other characters
             chord_quality += ch
         elif ch.isdigit():
             chord_steps.append(int(ch))
@@ -78,9 +84,9 @@ def chord_to_hot(chord):
         if num in step_mappings:
             idx = chord_root + step_mappings[num]
             if num == 7:
-                if chord_quality == "maj":
+                if chord_quality == "maj" or chord_quality == "j" : 
                     idx += 1
-                elif chord_quality == "dim":
+                elif chord_quality == "dim" or chord_quality =='o':
                     idx -= 1
             chord_multi_hot[idx % 12] = 1
 
