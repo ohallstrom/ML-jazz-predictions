@@ -59,7 +59,9 @@ def chord_to_hot(chord):
     ''' 
     # separate the root from the rest of the string
     if len(chord) > 1:
-        if chord[1] == 'b' or chord[1] == '#': # TODO: add character used for #
+        if chord == 'NC':
+            return np.zeros(12)
+        elif chord[1] == 'b' or chord[1] == '#': # TODO: add character used for #
             chord_root = root_mappings[chord[:2]]
             chord_rest = chord[2:]
         else:
