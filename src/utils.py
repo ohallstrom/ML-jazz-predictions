@@ -38,8 +38,7 @@ quality_mappings = { # TODO: add potential other "qualities"
     "j" : np.array([4,7]),#major
     '+': np.array([4,8]),#augmented
     '-': np.array([3,7]),#minor
-    
-    
+    'alt': np.array([3,4,8])
 }
 
 step_mappings = { # TODO: add more?
@@ -94,7 +93,8 @@ def chord_to_hot(chord):
     # add root pitch to 1
     chord_multi_hot[chord_root] = 1
     # add pitches according to chord quality
-    chord_multi_hot[(quality_mappings[chord_quality] + chord_root) % 12] = 1
+    if chord_quality in quality_mappings.keys():
+        chord_multi_hot[(quality_mappings[chord_quality] + chord_root) % 12] = 1
     # add pitches according to extra numbers
     for num in chord_steps:
         if num in step_mappings:
