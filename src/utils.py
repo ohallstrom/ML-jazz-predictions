@@ -76,7 +76,7 @@ def chord_to_hot(chord):
     chord_steps = []
 
     for ch in chord_rest:
-        if ch.isalpha():  # TODO : change to include other characters
+        if ch.isalpha() or ch == '+' or ch == '-':  # TODO : change to include other characters
             chord_quality += ch
         elif ch.isdigit():
             chord_steps.append(int(ch))
