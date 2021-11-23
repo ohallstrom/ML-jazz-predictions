@@ -2,7 +2,7 @@
 File name: utils.py
 Author: Oskar
 Date created: 17/11/2021
-Date last modified: 18/11/2021
+Date last modified: 23/11/2021
 Python Version: 3.8
 '''
 import numpy as np
@@ -82,12 +82,6 @@ def chord_to_hot(chord):
         elif ch == '/':
             break
     
-    # for debugging purposes
-    print(chord)
-    print(chord_root)
-    print(chord_quality)
-    print(chord_steps)
-
     # create multi-hot-encoding according to root, quality and steps
     chord_multi_hot = np.zeros(12)
     # add root pitch to 1
@@ -113,7 +107,7 @@ def multi_hot_to_int(multi_hot):
     Maps multi-hot representation to 
     integer representation by interpretating
     the multi_hot as a binary number. 
-    :param multi_hot: multi_hot representation of chord
+    :param multi_hot: np.array multi_hot representation of chord
     :return: integer representation of chord
     '''
     return int("".join(str(x) for x in multi_hot), 2)
