@@ -2,13 +2,13 @@
 File name: test.py
 Author: Oskar
 Date created: 17/11/2021
-Date last modified: 18/11/2021
+Date last modified: 23/11/2021
 Python Version: 3.8
 '''
 import numpy as np
 from utils import chord_to_hot, multi_hot_to_int
 
-chord_mappings = {
+chord_mappings = { # TODO: Should add some other test cases
   "C": np.array([1,0,0,0,1,0,0,1,0,0,0,0]),
    "Cm7": np.array([1,0,0,1,0,0,0,1,0,0,1,0]),
    "Cmaj7": np.array([1,0,0,0,1,0,0,1,0,0,0,1]),
@@ -19,6 +19,7 @@ chord_mappings = {
    "Bm7": np.array([0,0,1,0,0,0,1,0,0,1,0,1]),
    "Bmaj7": np.array([0,0,0,1,0,0,1,0,0,0,1,1]),
    "Csus2": np.array([1,0,1,0,0,0,0,1,0,0,0,0]),
+   "C7alt": np.array([1,0,0,1,1,0,0,0,1,0,1,0]),
 }
 
 binary_to_integer_mappings = {
