@@ -170,5 +170,3 @@ def multi_hot_to_int(multi_hot):
     :return: integer representation of chord
     '''
     return int("".join(str(x) for x in multi_hot), 2)
-
-print(chord_to_big_hot("Db"))
