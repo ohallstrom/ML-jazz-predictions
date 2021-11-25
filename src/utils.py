@@ -15,6 +15,7 @@ root_mappings = {
     "D#": 3,
     "Eb": 3,
     "E": 4,
+    "Fb": 4,
     "F": 5,
     "F#": 6,
     "Gb": 6,
@@ -24,7 +25,8 @@ root_mappings = {
     "A": 9,
     "A#": 10,
     "Bb": 10,
-    "B": 11
+    "B": 11,
+    "Cb": 11
 }
 
 quality_mappings = { # TODO: add potential other "qualities"
@@ -168,3 +170,5 @@ def multi_hot_to_int(multi_hot):
     :return: integer representation of chord
     '''
     return int("".join(str(x) for x in multi_hot), 2)
+
+print(chord_to_big_hot("Db"))
