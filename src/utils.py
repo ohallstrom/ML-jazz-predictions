@@ -51,6 +51,37 @@ step_mappings = { # TODO: add more?
     # 9: 2 or handle flat and sharp cases
 }
 
+num_quality_mappings_to_int = { # TODO: add potential other "qualities"
+    '4711': 1,
+    '4710': 2,
+    '369': 3,
+    '3710': 4,
+    '710': 5,
+    '4810': 6,
+    '34810': 7,
+    
+    '237': 8,
+    '247': 9,
+    '27': 10,
+    '248': 11,
+    '236': 12,
+    '2348': 13,
+    
+    '357': 14,
+    '457': 15,
+    '57': 16,
+    '458': 17,
+    '356': 18,
+    '3458': 19,
+    
+    '379': 20,
+    '479': 21,
+    '79': 22,
+    '489': 23,
+    '369': 24,
+    '3489': 25
+}
+
 def chord_to_hot(chord):
     '''
     Projects a chord into a
@@ -166,9 +197,29 @@ def multi_hot_to_int(multi_hot):
     Maps multi-hot representation to 
     integer representation by interpretating
     the multi_hot as a binary number. 
-    :param multi_hot: np.array multi_hot representation of chord
+    :param multi_hot: multi_hot representation of chord
     :return: integer representation of chord
     '''
-    return int("".join(str(x) for x in multi_hot), 2)
+
+    #case with all zeros
+    if multi_hot == np.zeros(12):
+        return 0
+    #case with one instance of one from index 12 to 23
+    else:
+        root_array = multi_hot[12:24]
+        i = root_array.argmax() # as we will have only 1 one so this thing would work to give index where 1 is located in the array
+
+        print(root_array)
+        print(i)
+        rest = multi_hot[0:12]
+
+        string_ints = [str(int) for int in [i for i, e in enumerate(rest) if e == 1]]
+        str_of_ints = "".join(string_ints) 
+
+        j = num_quality_mappings_to_int[str_of_ints]
+
+        return (25*i) + j
+        
+    
 
 print(chord_to_big_hot("Db"))
