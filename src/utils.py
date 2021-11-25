@@ -1,8 +1,8 @@
 '''
 File name: utils.py
-Author: Oskar
+Author: Oskar, Nikunj
 Date created: 17/11/2021
-Date last modified: 23/11/2021
+Date last modified: 25/11/2021
 Python Version: 3.8
 '''
 import numpy as np
@@ -51,6 +51,37 @@ step_mappings = { # TODO: add more?
     # 9: 2 or handle flat and sharp cases
 }
 
+num_quality_mappings_to_int = { # TODO: add potential other "qualities"
+    '4711': 1,
+    '4710': 2,
+    '369': 3,
+    '3710': 4,
+    '710': 5,
+    '4810': 6,
+    '34810': 7,
+    
+    '237': 8,
+    '247': 9,
+    '27': 10,
+    '248': 11,
+    '236': 12,
+    '2348': 13,
+    
+    '357': 14,
+    '457': 15,
+    '57': 16,
+    '458': 17,
+    '356': 18,
+    '3458': 19,
+    
+    '379': 20,
+    '479': 21,
+    '79': 22,
+    '489': 23,
+    '369': 24,
+    '3489': 25
+}
+
 def chord_to_hot(chord):
     '''
     Projects a chord into a
@@ -63,7 +94,7 @@ def chord_to_hot(chord):
     if len(chord) > 1:
         if chord == 'NC':
             return np.zeros(12)
-        elif chord[1] == 'b' or chord[1] == '#': # TODO: add character used for #
+        elif chord[1] == 'b' or chord[1] == '#': 
             chord_root = root_mappings[chord[:2]]
             chord_rest = chord[2:]
         else:
@@ -78,7 +109,7 @@ def chord_to_hot(chord):
     chord_steps = []
 
     for ch in chord_rest:
-        if ch.isalpha() or ch == '+' or ch == '-':  # TODO : change to include other characters
+        if ch.isalpha() or ch == '+' or ch == '-':  
             chord_quality += ch
         elif ch.isdigit():
             chord_steps.append(int(ch))
@@ -119,7 +150,7 @@ def chord_to_big_hot(chord):
     if len(chord) > 1:
         if chord == 'NC':
             return np.zeros(24)
-        elif chord[1] == 'b' or chord[1] == '#': # TODO: add character used for #
+        elif chord[1] == 'b' or chord[1] == '#': 
             chord_root = root_mappings[chord[:2]]
             chord_rest = chord[2:]
         else:
@@ -164,9 +195,27 @@ def chord_to_big_hot(chord):
 def multi_hot_to_int(multi_hot):
     '''
     Maps multi-hot representation to 
-    integer representation by interpretating
-    the multi_hot as a binary number. 
-    :param multi_hot: np.array multi_hot representation of chord
+    integer representation of the chord's
+    class
+    :param multi_hot: 24 element multi_hot representation of chord
     :return: integer representation of chord
     '''
-    return int("".join(str(x) for x in multi_hot), 2)
+    #case with all zeros
+    if multi_hot == np.zeros(12):
+        return 0
+    #case with one instance of one from index 12 to 23
+    else:
+        root_array = multi_hot[12:]
+        root_index = root_array.argmax() 
+
+        chord_form_array = multi_hot[:12]
+
+        string_ints = [str(int) for int in [i for i, e in enumerate(chord_form_array) if e == 1]]
+        str_of_ints = "".join(string_ints) 
+
+        j = num_quality_mappings_to_int[str_of_ints]
+
+        return (25*root_index) + j
+        
+    
+
