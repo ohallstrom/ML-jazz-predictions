@@ -220,7 +220,12 @@ def multi_hot_to_int(multi_hot):
         return (25*root_index) + j
         
     
-def pitch_to_note(pitch):
+def pitch_to_note(pitch): #Should I change it to int value rather than string then
+    '''
+    Projects a pitch into the respective note value
+    :pitch: pitch value to be converted
+    :return: the string of note it represents 
+    ''' 
     mapping = (pitch - 24) % 12
     return rev_root_mapping[mapping]
 
