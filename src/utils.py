@@ -29,6 +29,8 @@ root_mappings = {
     "Cb": 11
 }
 
+rev_root_mapping = dict((v,k) for k,v in root_mappings.items())
+
 quality_mappings = { # TODO: add potential other "qualities"
     "m": np.array([3,7]),
     "": np.array([4,7]),
@@ -218,4 +220,7 @@ def multi_hot_to_int(multi_hot):
         return (25*root_index) + j
         
     
+def pitch_to_note(pitch):
+    mapping = (pitch - 24) % 12
+    return rev_root_mapping[mapping]
 
