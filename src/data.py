@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 from sqlalchemy import create_engine
 from torch.utils.data import Dataset, DataLoader
-from utils.mappings import chord_to_big_hot, multi_hot_to_int
+from utils.mappings import binary_to_int, chord_to_big_hot, multi_hot_to_int, binary_to_int
 
 DATA_PATH = "../data/wjazzd.db" 
 
@@ -20,6 +20,27 @@ def get_baseline_dataloader(vocab_size):
 	baseline_sequences = get_baseline_sequences()
 	dataset = BaselineDataset(baseline_sequences, vocab_size)
 	return DataLoader(dataset, batch_size=10, shuffle=False)
+
+def get_chord_type_dict(series):
+	'''
+	Creates a dictionary which maps
+	each chord type into a class int
+	in range [0, number_chord_types - 1]
+	:param series: series containing multi_hot_rep of chords
+	:return dict: dictionary which maps 
+	the int corresponding to the binary number
+	of the chord vector (sparse), to its class int (dense)
+	'''
+	# transorm each chord type into an int 
+	series = series.apply(binary_to_int)
+
+	# sort ints and remove duplicates
+	series = series.drop_duplicates().sort_values(ascending = True)
+	
+	series = series.reset_index(drop = True)
+
+	return dict(zip(series, series.index))
+
 
 def get_baseline_dataframe():
 	# TODO: add doc-string

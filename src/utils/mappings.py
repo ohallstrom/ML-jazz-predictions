@@ -236,3 +236,13 @@ def pitch_to_note(pitch): #Should I change it to int value rather than string th
     mapping = (pitch - 24) % 12
     return rev_root_mapping[mapping]
 
+def binary_to_int(multi_hot):
+    '''
+    Maps multi-hot representation to 
+    integer representation by interpretating
+    the multi_hot as a binary number. 
+    :param multi_hot: np.array multi_hot representation of chord form
+     :return: sparse integer representation of chord, based on binary number
+     '''
+    return int("".join(str(x) for x in multi_hot[:12]), 2)
+
