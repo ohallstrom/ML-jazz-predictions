@@ -1,5 +1,5 @@
 # ML-jazz-predictions
-### Use machine learning to predict the next chord in Jazz music
+### Predicting the next chord in Jazz music through Machine Learning
 
 * Ongoing project
 
