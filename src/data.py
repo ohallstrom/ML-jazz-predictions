@@ -103,3 +103,66 @@ class BaselineDataset(Dataset):
 			"target": torch.tensor(target).long(),
 			"length": sequence_length - 1,  
 		}
+
+# might want to move these into utils
+
+def remove_chord_root(chord):
+	'''
+	Returns the chord without its root and potential base
+	:param chord: str corresponding to chord
+	:return: str corresponding to chord type
+	'''
+	if len(chord) > 1:
+		if chord == "NC":
+			return 'NC'
+		elif chord[1] == 'b' or chord[1] == '#': 
+			chord = chord[2:]
+		else:
+			chord = chord[1:]
+	else:
+		chord = ""
+	
+	return chord.split('/')[0] 
+
+def get_chord_type_number(chord_type, chord_type_dict):
+	'''
+	Projects the chord_type to the most similar
+	chord_type in chord_type_dict and return its
+	class number
+	:param chord_type: str of chord type to assign number
+	:param chord_type_dict: dict of {str, int} mapping chord type to class number
+	OBS: Should be sorted by descending length of keys
+	:return: int - class number
+	'''
+	if chord_type in chord_type_dict:
+		return chord_type_dict[chord_type]
+	for key in chord_type_dict.keys():
+		if chord_type.startswith(key):
+			next_char = chord_type[len(key)]
+			if next_char not in ['b', "#"]: # chec
+				return chord_type_dict[key]
+	return len(chord_type_dict) - 1 # will never be run if "" is the last key of chord_type_dict
+
+def create_chord_type_dict(series):
+	'''
+	Creates a dictionary that
+	maps chord_types to their class int.
+	Only includes chord_types with at least
+	1 % of the total occurrences of chord_types
+	:param series: pd.Series containing all chord occurences
+	:return: dict of {str, int} mapping chord type to class int,
+	sorted by descending length of keys
+	'''
+	n = series.shape[0]
+
+	# get chord types and filter away NC and types with too few occurences
+	chord_types = series.apply(lambda x: remove_chord_root(x))
+	chord_types = chord_types[~chord_types.str.contains('NC')]
+	chord_type_percentage = chord_types.value_counts()/n
+	chord_types_filtered = chord_type_percentage[chord_type_percentage > 0.01].index.to_list()
+
+	# sort according to chord_type length
+	chord_types_sorted = sorted(chord_types_filtered, key = lambda x: -len(x))
+
+	return dict(zip(chord_types_sorted, range(len(chord_types_sorted))))
+
