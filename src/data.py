@@ -108,7 +108,7 @@ class BaselineDataset(Dataset):
 
 def remove_chord_root(chord):
 	'''
-	Returns the chord without its root and potential base
+	Returns the chord without its root and potential bass pitch
 	:param chord: str corresponding to chord
 	:return: str corresponding to chord type
 	'''
