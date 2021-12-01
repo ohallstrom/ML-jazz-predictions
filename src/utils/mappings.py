@@ -34,20 +34,15 @@ rev_root_mapping = dict((v,k) for k,v in root_mappings.items())
 quality_mappings = { # TODO: add potential other "qualities"
     "m": np.array([3,7]),
     "": np.array([4,7]),
-    "maj": np.array([4,7]),
     "sus": np.array([7]),
-    "aug": np.array([4,8]),
-    "dim": np.array([3,6]),
     "o" : np.array([3,6]), #dimimnished
-    "j" : np.array([4,7]),#major
-    '+': np.array([4,8]),#augmented
-    '-': np.array([3,7]),#minor
+    "j" : np.array([4,7]), #major
+    '+': np.array([4,8]), #augmented
+    '-': np.array([3,7]), #minor
     'alt': np.array([3,4,8])
 }
 
 step_mappings = { # TODO: add more?
-    2: 2,
-    4: 5,
     6: 9, # are there any flat or sharp cases? handle these in this case
     7: 10,
     # 9: 2 or handle flat and sharp cases
@@ -233,7 +228,7 @@ def pitch_to_note(pitch): #Should I change it to int value rather than string th
     :pitch: pitch value to be converted
     :return: the string of note it represents 
     ''' 
-    mapping = (pitch - 24) % 12
+    mapping = pitch % 12
     return rev_root_mapping[mapping]
 
 def binary_to_int(multi_hot):
