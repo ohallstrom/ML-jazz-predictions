@@ -54,7 +54,7 @@ def get_baseline_dataframe():
 	beats_clean.dropna(subset = ['chord'], inplace=True)
 
 	#
-	beats_clean['chord'] = beats_clean['chord'].apply(lambda x: chord_to_big_hot(x))
+	#beats_clean['chord'] = beats_clean['chord'].apply(lambda x: chord_to_big_hot(x))
 	return beats_clean
 
 def get_baseline_sequences():
@@ -145,12 +145,11 @@ def get_chord_type_number(chord_type, chord_type_dict):
 
 def create_chord_type_dict(series):
 	'''
-	Creates a dictionary that
-	maps chord_types to their class int.
-	Only includes chord_types with at least
+	Creates a dictionary that maps chord_types to their class int.
+	Only includes essential chord_types and chord_types with at least
 	1 % of the total occurrences of chord_types
 	:param series: pd.Series containing all chord occurences
-	:return: dict of {str, int} mapping chord type to class int,
+	:return chord_type_dict_sorted: dict of {str, int} mapping chord type to class int,
 	sorted by descending length of keys
 	'''
 	n = series.shape[0]
@@ -159,10 +158,17 @@ def create_chord_type_dict(series):
 	chord_types = series.apply(lambda x: remove_chord_root(x))
 	chord_types = chord_types[~chord_types.str.contains('NC')]
 	chord_type_percentage = chord_types.value_counts()/n
+
 	chord_types_filtered = chord_type_percentage[chord_type_percentage > 0.01].index.to_list()
 
-	# sort according to chord_type length
-	chord_types_sorted = sorted(chord_types_filtered, key = lambda x: -len(x))
+	# create dictionary and add essential types if missing
+	chord_type_dict = dict(zip(chord_types_filtered, range(len(chord_types_filtered))))
+	essential_types = ['o', 'j7', '+', 'sus', ''] # covers essential types in the database
+	for essential_type in essential_types:
+		if essential_type not in chord_type_dict: 
+			chord_type_dict[essential_type] = len(chord_type_dict)
+	
+	# sort dict according to chord_type length
+	chord_type_dict_sorted = {k: chord_type_dict[k] for k in sorted(chord_type_dict, key = lambda k: -len(k))}
 
-	return dict(zip(chord_types_sorted, range(len(chord_types_sorted))))
-
+	return chord_type_dict_sorted
