@@ -1,52 +1,4 @@
-'''
-File name: mappings.py
-Author: Oskar, Nikunj
-Date created: 17/11/2021
-Date last modified: 25/11/2021
-Python Version: 3.8
-'''
-import numpy as np
-
-root_mappings = {
-    "C": 0,
-    "C#": 1,
-    "Db": 1,
-    "D": 2,
-    "D#": 3,
-    "Eb": 3,
-    "E": 4,
-    "Fb": 4,
-    "F": 5,
-    "F#": 6,
-    "Gb": 6,
-    "G": 7,
-    "G#": 8,
-    "Ab": 8,
-    "A": 9,
-    "A#": 10,
-    "Bb": 10,
-    "B": 11,
-    "Cb": 11
-}
-
-rev_root_mapping = dict((v,k) for k,v in root_mappings.items())
-
-quality_mappings = { # TODO: add potential other "qualities"
-    "m": np.array([3,7]),
-    "": np.array([4,7]),
-    "sus": np.array([7]),
-    "o" : np.array([3,6]), #dimimnished
-    "j" : np.array([4,7]), #major
-    '+': np.array([4,8]), #augmented
-    '-': np.array([3,7]), #minor
-    'alt': np.array([3,4,8])
-}
-
-step_mappings = { # TODO: add more?
-    6: 9, # are there any flat or sharp cases? handle these in this case
-    7: 10,
-    # 9: 2 or handle flat and sharp cases
-}
+''' Unused functions and variables'''
 
 num_quality_mappings_to_int = { # TODO: add potential other "qualities"
     '4711': 1,
@@ -85,6 +37,71 @@ num_quality_mappings_to_int = { # TODO: add potential other "qualities"
     '7': 30,
     '48': 31,
 }
+
+def binary_to_int(multi_hot):
+    '''
+    Maps multi-hot representation to 
+    integer representation by interpretating
+    the multi_hot as a binary number. 
+    :param multi_hot: np.array multi_hot representation of chord form
+     :return: sparse integer representation of chord, based on binary number
+     '''
+    return int("".join(str(x) for x in multi_hot[:12]), 2)
+
+def chord_to_big_hot(chord):
+    '''
+    Projects a chord into a
+    multi-hot-encoded representation of length 24
+    :param chord: String representation of chord
+    :return: the chord in multi-hot-encoding,
+    first 12 positions corresponds to the chord format (without root),
+    and the 12 last positions to the root position
+    ''' 
+    # separate the root from the rest of the string
+    if len(chord) > 1:
+        if chord == 'NC':
+            return np.zeros(24)
+        elif chord[1] == 'b' or chord[1] == '#': 
+            chord_root = root_mappings[chord[:2]]
+            chord_rest = chord[2:]
+        else:
+            chord_root = root_mappings[chord[0]]
+            chord_rest = chord[1:]
+    else:
+        chord_root = root_mappings[chord[0]]
+        chord_rest = ""
+
+    # retrieve chord quality and steps
+    chord_quality = ""
+    chord_steps = []
+
+    for ch in chord_rest
+        if ch.isalpha() or ch == '+' or ch == '-': 
+            chord_quality += ch
+        elif ch.isdigit():
+            chord_steps.append(int(ch))
+        elif ch == '/':
+            break
+    
+    # create multi-hot-encoding according to root, quality and steps
+    chord_multi_hot = np.zeros(24)
+    # add root pitch to second part of encoding
+    chord_multi_hot[chord_root+12] = 1
+    # add pitches according to chord quality
+    if chord_quality in quality_mappings.keys():
+        chord_multi_hot[quality_mappings[chord_quality] % 12] = 1
+    # add pitches according to extra numbers
+    for num in chord_steps:
+        if num in step_mappings:
+            idx = step_mappings[num]
+            if num == 7:
+                if chord_quality == "maj" or chord_quality == "j" : 
+                    idx += 1
+                elif chord_quality == "dim" or chord_quality =='o':
+                    idx -= 1
+            chord_multi_hot[idx % 12] = 1
+
+    return chord_multi_hot
 
 def chord_to_hot(chord):
     '''
@@ -141,61 +158,6 @@ def chord_to_hot(chord):
     return chord_multi_hot
 
 
-def chord_to_big_hot(chord):
-    '''
-    Projects a chord into a
-    multi-hot-encoded representation of length 24
-    :param chord: String representation of chord
-    :return: the chord in multi-hot-encoding,
-    first 12 positions corresponds to the chord format (without root),
-    and the 12 last positions to the root position
-    ''' 
-    # separate the root from the rest of the string
-    if len(chord) > 1:
-        if chord == 'NC':
-            return np.zeros(24)
-        elif chord[1] == 'b' or chord[1] == '#': 
-            chord_root = root_mappings[chord[:2]]
-            chord_rest = chord[2:]
-        else:
-            chord_root = root_mappings[chord[0]]
-            chord_rest = chord[1:]
-    else:
-        chord_root = root_mappings[chord[0]]
-        chord_rest = ""
-
-    # retrieve chord quality and steps
-    chord_quality = ""
-    chord_steps = []
-
-    for ch in chord_rest:
-        if ch.isalpha() or ch == '+' or ch == '-':  # TODO : change to include other characters
-            chord_quality += ch
-        elif ch.isdigit():
-            chord_steps.append(int(ch))
-        elif ch == '/':
-            break
-    
-    # create multi-hot-encoding according to root, quality and steps
-    chord_multi_hot = np.zeros(24)
-    # add root pitch to second part of encoding
-    chord_multi_hot[chord_root+12] = 1
-    # add pitches according to chord quality
-    if chord_quality in quality_mappings.keys():
-        chord_multi_hot[quality_mappings[chord_quality] % 12] = 1
-    # add pitches according to extra numbers
-    for num in chord_steps:
-        if num in step_mappings:
-            idx = step_mappings[num]
-            if num == 7:
-                if chord_quality == "maj" or chord_quality == "j" : 
-                    idx += 1
-                elif chord_quality == "dim" or chord_quality =='o':
-                    idx -= 1
-            chord_multi_hot[idx % 12] = 1
-
-    return chord_multi_hot
-
 def multi_hot_to_int(multi_hot):
     '''
     Maps multi-hot representation to 
@@ -220,24 +182,24 @@ def multi_hot_to_int(multi_hot):
         j = num_quality_mappings_to_int[str_of_ints]
 
         return (25*root_index) + j
-        
-    
-def pitch_to_note(pitch): #Should I change it to int value rather than string then
-    '''
-    Projects a pitch into the respective note value
-    :pitch: pitch value to be converted
-    :return: the string of note it represents 
-    ''' 
-    mapping = pitch % 12
-    return rev_root_mapping[mapping]
 
-def binary_to_int(multi_hot):
-    '''
-    Maps multi-hot representation to 
-    integer representation by interpretating
-    the multi_hot as a binary number. 
-    :param multi_hot: np.array multi_hot representation of chord form
-     :return: sparse integer representation of chord, based on binary number
-     '''
-    return int("".join(str(x) for x in multi_hot[:12]), 2)
 
+def get_chord_type_dict(series):
+	'''
+	Creates a dictionary which maps
+	each chord type into a class int
+	in range [0, number_chord_types - 1]
+	:param series: series containing multi_hot_rep of chords
+	:return dict: dictionary which maps 
+	the int corresponding to the binary number
+	of the chord vector (sparse), to its class int (dense)
+	'''
+	# transorm each chord type into an int 
+	series = series.apply(binary_to_int)
+
+	# sort ints and remove duplicates
+	series = series.drop_duplicates().sort_values(ascending = True)
+	
+	series = series.reset_index(drop = True)
+
+	return dict(zip(series, series.index))

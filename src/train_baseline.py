@@ -5,7 +5,6 @@ Date created: 28/11/2021
 Date last modified: 28/11/2021
 Python Version: 3.8
 '''
-import torch
 import logging
 import os
 from datetime import datetime
@@ -70,11 +69,10 @@ if __name__ == '__main__':
     # set base parameters
     vocab_size = 24
     lstm_hidden_size = 48
-    classes_size = 372
+    
+    dataloader, classes_size = get_baseline_dataloader(vocab_size)
 
     model = BaselineChordSequenceModel(vocab_size, lstm_hidden_size, classes_size)
-
-    dataloader = get_baseline_dataloader(vocab_size)
 
     train(model, dataloader)
 
