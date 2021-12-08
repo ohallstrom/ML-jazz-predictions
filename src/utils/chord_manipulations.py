@@ -44,6 +44,7 @@ step_mappings = {
     5: 7,
     6: 9, 
     7: 10,
+	9: 2
 }
 
 def chord_to_big_hot(chord):
@@ -95,6 +96,7 @@ def chord_to_big_hot(chord):
                 chord_steps.append(int(ch))
             elif ch == '/':
                 break
+
 
         # add pitches according to steps
         for step in chord_steps:
@@ -172,7 +174,7 @@ def get_chord_type_reduction(chord_type, chord_type_dict):
 		return (chord_type, chord_type_dict[chord_type])
 	elif chord_type == 'NC':
 		return ("NC", -1)
-	for key in chord_type_dict.keys():
+	for key in chord_type_dict:
 		if chord_type.startswith(key):
 			next_char = chord_type[len(key)]
 			if next_char not in ['b', "#"]: # check that step is not sharp or flat
