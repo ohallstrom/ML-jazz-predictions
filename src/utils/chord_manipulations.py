@@ -200,7 +200,7 @@ def create_chord_type_dict(series):
 
 	# create dictionary and add essential types if missing
 	chord_type_dict = dict(zip(chord_types_filtered, range(len(chord_types_filtered))))
-	essential_types = ['o', 'j7', '+', 'sus', ''] # covers essential types in the database
+	essential_types = ['o', 'j7', '+', 'sus', ''] # covers essential types in the database TODO: update
 	for essential_type in essential_types:
 		if essential_type not in chord_type_dict: 
 			chord_type_dict[essential_type] = len(chord_type_dict)
