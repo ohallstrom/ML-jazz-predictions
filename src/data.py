@@ -6,103 +6,111 @@ Date last modified: 28/11/2021
 Python Version: 3.8
 '''
 import torch
+import random
+from ast import literal_eval
 import pandas as pd
 import numpy as np
-from sqlalchemy import create_engine
 from torch.utils.data import Dataset, DataLoader
 from utils.chord_manipulations import create_chord_type_dict, add_chord_cols
 
-DATA_PATH = "../data/wjazzd.db" 
 
-def get_baseline_dataloader(vocab_size):
-	'''
-	Creates a dataloader containing preprocessed data from the dataset file
-	:return: (DataLoader, Int - number of chord classes)
-	'''
-	multi_hot_sequences, class_sequences, classes_size = get_baseline_sequences()
-	dataset = BaselineDataset(multi_hot_sequences, class_sequences, vocab_size)
-	return DataLoader(dataset, batch_size=10, shuffle=False), classes_size
 
-def get_baseline_dataframe():
-	'''
-	Loads the dataframe from database-file
-	and preprocess the data
-	:return beats_clean: the preprocessed dataframe
-	:return classes_size: int - number of classes in the dataset
-	'''
-	engine = create_engine(f"sqlite:///{DATA_PATH}")
-	beats = pd.read_sql("beats", engine)
+class VLDataset(Dataset):
+  def __init__(self, sequences, targs, vocab_size):
+    self.sequences = sequences
+    self.targs = targs
+    self.vocab_size = vocab_size
+    self.max_length = max(map(len, self.sequences))  # Add max length
 
-	# remove rows without chords
-	beats_clean = beats.copy()
-	beats_clean['chord'] = beats_clean['chord'].replace(r'^\s*$', np.nan, regex=True)
-	beats_clean.dropna(subset = ['chord'], inplace=True)
+  def __len__(self):
+    return len(self.sequences)
 
-	chord_type_dict = create_chord_type_dict(beats_clean['chord'])
-	classes_size = len(chord_type_dict) * 12 + 1
+  def __getitem__(self, i):
+    sequence = self.sequences[i]
+    sequence_length = len(self.sequences[i])
+    # print(sequence_length, self.max_length)
+    # Pad input with 0 up to max length
+    input = np.zeros((self.max_length, self.vocab_size))
+    input[:sequence_length,:] = sequence 
 
-	# add columns for reduced chord, multihot-encoding and class int, remove consecutive duplicates
-	beats_clean = beats_clean.apply(lambda row: add_chord_cols(row, chord_type_dict), axis = 1)
-	beats_clean = beats_clean[beats_clean['chord_class'] != beats_clean['chord_class'].shift(1)]
-	return beats_clean, classes_size
+    #Pad target with some INVALID value (-1)
+    target = np.ones(self.max_length - 1) * -1
+    #target[:sequence_length - 1] = sequence[1:]
+    # target = np.full((self.max_length-1,), -1)
+    
+    # print(self.targs[i])
+    if sequence_length > 1:
+      target[:sequence_length-1] = self.targs[i][1:sequence_length]
 
-def get_baseline_sequences():
-	'''
-	Retrieves sequences of chord data
-	for each song in the dataset, can
-	be used to create the dataset
-	:return multi_hot_sequences: list containing multi_hots per song
-	:return class_sequences: list containing class labels per song
-	:return classes_size: int - number of classes in the dataset
-	'''
-	beats_clean, classes_size = get_baseline_dataframe()
+    return {
+        "input": torch.tensor(input[:-1]),
+        "target": torch.tensor(target).long(),
+        "length": sequence_length - 1,  # Return the length
+    }
 
-	# for each melody, append the multi_hots and classes to a list if valid
-	mel_ids = beats_clean['melid'].unique()
-	multi_hot_sequences = []
-	class_sequences = []
-	for mel_id in mel_ids:
-		# select data points with current mel_id
-		current_beats = beats_clean[beats_clean['melid'] == mel_id]
-		
-		# append multi_hot / labels that are longer than 1 to its list
-		class_labels = np.array(current_beats['chord_class'].tolist())
 
-		# Verify that the there are enough chords in the song before adding
-		if len(class_labels) > 1:
-			class_sequences.append(np.array(class_labels))
-			multi_hots = np.array(current_beats['chord_enc'].tolist())
-			multi_hot_sequences.append(np.array(multi_hots))
+def get_data(vocab_size,mtype):
+    '''
+    Creates the dataloaders containing preprocessed data from the dataset file
+    :return: (DataLoader_train, DataLoader_validation, DataLoader_test)
+    '''
+    data=pd.read_csv('../data/data_preprocessed.csv')
+    data['chord_enc']=data['chord_enc'].apply(lambda x: literal_eval(x))
+    data['pitch_bow']=data['pitch_bow'].apply(lambda x: literal_eval(x))
+    data['duration']=data['onset'] - data['onset'].shift(1)
+    data.dropna(subset = ['duration'], inplace=True)
+    data['duration'] = data['duration'].apply(lambda x: [x])
+    temp=data.copy()
+    vocab_size=24
+    if mtype=='c':
+        temp['data']=data['chord_enc']
+    elif mtype=='cd':
+        temp['data']=data['chord_enc']+temp['duration']
+        vocab_size+=1
+    elif mtype=='cm':
+        temp['data']=data['chord_enc']+temp['pitch_bow']
+        vocab_size+=12
+    elif mtype=='cmd':
+        temp['data']=data['chord_enc']+temp['pitch_bow']+temp['duration']
+        vocab_size+=13
 
-	return multi_hot_sequences, class_sequences, classes_size
+    mel_ids = temp['melid'].unique()
+    targets=[]
+    sequences = []
+    for mel_id in mel_ids:
+      # get series with all chords from song with mel_id
+      chords = temp[temp['melid'] == mel_id]['data']
+      chords_2d_np_array = np.array(chords.tolist())
+      sequences.append(np.array(chords_2d_np_array))
+      targs=temp[temp['melid'] == mel_id]['chord_class']
+      targets.append(np.array(targs.tolist()))
 
-class BaselineDataset(Dataset):
-	def __init__(self, multi_hot_sequences, class_sequences, vocab_size):
-		self.multi_hot_sequences = multi_hot_sequences
-		self.class_sequences = class_sequences
-		self.vocab_size = vocab_size
-		self.max_length = max(map(len, self.class_sequences))  # Add max length
+    sequences_clean=[]
+    targets_clean=[]
+    for i in range(len(sequences)):
+      if len(sequences[i])>2:
+        sequences_clean.append(sequences[i])
+        targets_clean.append(targets[i])
 
-	def __len__(self):
-		return len(self.class_sequences)
+    c = list(zip(sequences_clean, targets_clean))
+    random.Random(4).shuffle(c)
 
-	def __getitem__(self, i):
-		multi_hot_sequence = self.multi_hot_sequences[i]
-		class_sequence = self.class_sequences[i]
-		sequence_length = len(class_sequence)
+    sequences_clean, targets_clean = zip(*c)
 
-		# Pad input with 0 up to max length
-		input = np.zeros((self.max_length, 24))
-		input[:sequence_length,:] = multi_hot_sequence
+    l=len(sequences_clean)
+    sequences_clean_train=sequences_clean[:int(0.8*l)]
+    sequences_clean_val=sequences_clean[int(0.8*l):int(0.9*l)]
+    sequences_clean_test=sequences_clean[int(0.9*l):]
+    targets_clean_train=targets_clean[:int(0.8*l)]
+    targets_clean_val=targets_clean[int(0.8*l):int(0.9*l)]
+    targets_clean_test=targets_clean[int(0.9*l):]
 
-		#Pad target with some INVALID value (-1)
-		target = np.full((self.max_length-1,), -1)
+    vl_dataset_train = VLDataset(sequences_clean_train, targets_clean_train ,vocab_size)
+    vl_dataset_val = VLDataset(sequences_clean_val, targets_clean_val ,vocab_size)
+    vl_dataset_test = VLDataset(sequences_clean_test, targets_clean_test ,vocab_size)
 
-		if sequence_length > 1:
-			target[:sequence_length-1] = class_sequence[1:] 
+    vl_dl_train = DataLoader(vl_dataset_train, batch_size=10, shuffle=True) 
+    vl_dl_val = DataLoader(vl_dataset_val, batch_size=10, shuffle=False)
+    vl_dl_test = DataLoader(vl_dataset_test, batch_size=10, shuffle=False)
 
-		return {
-			"input": torch.tensor(input[:-1]),
-			"target": torch.tensor(target).long(),
-			"length": sequence_length - 1,  
-		}
+    return vl_dl_train, vl_dl_val, vl_dl_test
