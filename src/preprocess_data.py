@@ -1,3 +1,10 @@
+'''
+File name: preprocess_data.py
+Author: Anmol, Oskar
+Date created: 16/12/2021
+Date last modified: 16/12/2021
+Python Version: 3.8
+'''
 import pickle
 import pandas as pd
 import numpy as np

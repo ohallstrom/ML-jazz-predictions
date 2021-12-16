@@ -1,8 +1,8 @@
 '''
 File name: train_baseline.py
-Author: Andrew, Anmol, Oskar
-Date created: 28/11/2021
-Date last modified: 28/11/2021
+Author: Anmol, Oskar
+Date created: 16/12/2021
+Date last modified: 16/12/2021
 Python Version: 3.8
 '''
 from data import get_data
@@ -27,7 +27,7 @@ if __name__ == '__main__':
             model_path = 'models/' + arg + '.pth'
             
             dataloader_train, dataloader_val, dataloader_test = get_data(vocab_size, mtypes[arg])
-            test(model_path, dataloader_test)
+            test(model_path, dataloader_test, arg)
 
 
 

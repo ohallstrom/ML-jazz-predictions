@@ -7,6 +7,7 @@ Python Version: 3.8
 '''
 import logging
 import numpy as np
+import pickle
 import torch
 from torch import optim
 import torch.nn as nn
@@ -125,9 +126,12 @@ def train(model, dataloader_train, dataloader_val, save_pth):
 
 		#!TODO save losses and accuracies or plot
 
-def test(model_pth, dataloader_test):
+def test(model_pth, dataloader_test, setup):
 	'''
 	Tests the given model on the given dataloader
+	:param model_pth: the pth of trained model for the setup
+	:param dataloader_test: dataloader for test data
+	:param setup: string rep of the setup
 	'''
 	targs=[]
 	preds=[]
@@ -136,6 +140,7 @@ def test(model_pth, dataloader_test):
 	count=0
 	to = 'cpu'
 	model = torch.load(model_pth)
+	model.eval()
 	for batch_idx, batch in enumerate(dataloader_test):
 		count+=1
 		inputs = batch["input"].float().to(to)
@@ -175,7 +180,7 @@ def test(model_pth, dataloader_test):
 	results = pd.DataFrame({'target': targs_all[mask], 'predictions': preds_all[mask]})
 	results['target'] = results['target'].apply(chord_class_to_str)
 	results['predictions'] = results['predictions'].apply(chord_class_to_str)
-	results.to_csv('./../../data/predictions.csv')
+	results.to_csv('./../data/predictions_' + setup + '.csv')
 
 def chord_class_to_str(chord_class):
 	'''
@@ -187,7 +192,7 @@ def chord_class_to_str(chord_class):
 	if chord_class == 0:
 		return 'NC'
 	else:
-		with open('./../../data/chord_class_inv.pickle', 'rb') as handle:
+		with open('./../data/chord_class_inv.pickle', 'rb') as handle:
 			chord_type_dict_inv = pickle.load(handle)
 		chord_types_n = len(chord_type_dict_inv)
 		type_int = (chord_class - 1) % chord_types_n

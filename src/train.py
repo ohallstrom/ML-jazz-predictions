@@ -1,8 +1,8 @@
 '''
-File name: train_baseline.py
-Author: Andrew, Anmol, Oskar
-Date created: 28/11/2021
-Date last modified: 28/11/2021
+File name: train.py
+Author: Anmol, Oskar
+Date created: 16/12/2021
+Date last modified: 16/12/2021
 Python Version: 3.8
 '''
 import logging
