@@ -49,7 +49,7 @@ class VLDataset(Dataset):
     }
 
 
-def get_data(vocab_size,mtype):
+def get_data(vocab_size, mtype):
     '''
     Creates the dataloaders containing preprocessed data from the dataset file
     :return: (DataLoader_train, DataLoader_validation, DataLoader_test)

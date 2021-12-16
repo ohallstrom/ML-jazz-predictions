@@ -29,6 +29,7 @@ root_mappings = {
     "Cb": 11
 }
 
+
 quality_mappings = {
     "m": np.array([3,7]),
     "": np.array([4,7]),
@@ -238,3 +239,4 @@ def add_chord_cols(row, chord_type_dict):
 		row['chord_class'] = 0
 		
 	return row
+
