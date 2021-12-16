@@ -13,7 +13,7 @@ import torch.nn.functional as F
 class ChordSequenceModel(nn.Module):
 	def __init__(self, input_size,  vocab_size, lstm_hidden_size):
 		super().__init__()
-		self.vocab_size = vocab_size # 24 # vocab_size previously pass in parameter 24
+		self.vocab_size = vocab_size 
 		self.input_size = input_size
 		self.lstm_hidden_size = lstm_hidden_size
 
@@ -28,9 +28,8 @@ class ChordSequenceModel(nn.Module):
 		self.dropout = nn.Dropout(0.1)
 		self.output = nn.Linear(self.lstm_hidden_size, self.vocab_size)
 
-	def forward(self, inputs, lengths):  # Add lengths to input # should be fine # add soft-max for probability interpretation
+	def forward(self, inputs, lengths):  
 		# Shape = batch, sequence, vocab_size
-		# print(inputs.shape)
 		packed = pack_padded_sequence(inputs, lengths, enforce_sorted=False, batch_first=True)
 		lstm_out_packed, hidden_out = self.lstm(packed)
 		lstm_out, _ = pad_packed_sequence(lstm_out_packed, batch_first=True)
@@ -41,4 +40,4 @@ class ChordSequenceModel(nn.Module):
 		output = self.output(drop)
 
 		# Shape = batch, sequence, vocab_size
-		return output  # Sometimes you want a softmax here -- look at the loss documentation
+		return output  

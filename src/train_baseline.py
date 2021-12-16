@@ -32,71 +32,71 @@ def train(model, dataloader_train, dataloader_val, save_pth):
 
     max_val=0
     for epoch in range(30):
-      accuracy=0
-      avg_loss=0
-      accuracy_val=0
-      avg_loss_val=0
-      count=0
-      for batch_idx, batch in enumerate(dataloader_train):
-        count+=1
-        inputs = batch["input"].float().to('cuda')
-        lengths = batch["length"]
-        # print(lengths)
-        targets = batch["target"][:, :max(lengths)].to('cuda')  # Pad_packed cuts off at max_length
+        accuracy=0
+        avg_loss=0
+        accuracy_val=0
+        avg_loss_val=0
+        count=0
+        for batch_idx, batch in enumerate(dataloader_train):
+            count+=1
+            inputs = batch["input"].float().to('cuda')
+            lengths = batch["length"]
+            # print(lengths)
+            targets = batch["target"][:, :max(lengths)].to('cuda')  # Pad_packed cuts off at max_length
 
-        optimizer.zero_grad()
-        outputs = model(inputs, lengths)
-        # print(inputs.shape,targets.shape, outputs.shape)
-        loss = get_loss(outputs, targets)
-        lossv=loss.item()
-        acc = get_accuracy(outputs, targets)
-        accv = acc.item()
+            optimizer.zero_grad()
+            outputs = model(inputs, lengths)
+            # print(inputs.shape,targets.shape, outputs.shape)
+            loss = get_loss(outputs, targets)
+            lossv=loss.item()
+            acc = get_accuracy(outputs, targets)
+            accv = acc.item()
 
-        accuracy+=accv
-        avg_loss+=lossv
+            accuracy+=accv
+            avg_loss+=lossv
 
-        loss.backward()
-        optimizer.step()
+            loss.backward()
+            optimizer.step()
         
 
-      avg_loss/=count
-      accuracy/=count  
+        avg_loss/=count
+        accuracy/=count  
 
-      count=0
+        count=0
 
-      for batch_idx, batch in enumerate(dataloader_val):
-        count+=1
-        inputs = batch["input"].float().to('cuda')
-        lengths = batch["length"]
-        # print(lengths)
-        targets = batch["target"][:, :max(lengths)].to('cuda')  # Pad_packed cuts off at max_length
+        for batch_idx, batch in enumerate(dataloader_val):
+            count+=1
+            inputs = batch["input"].float().to('cuda')
+            lengths = batch["length"]
+            # print(lengths)
+            targets = batch["target"][:, :max(lengths)].to('cuda')  # Pad_packed cuts off at max_length
 
-        optimizer.zero_grad()
-        outputs = model(inputs, lengths)
-        # print(inputs.shape,targets.shape, outputs.shape)
-        loss = get_loss(outputs, targets)
-        lossv=loss.item()
-        acc = get_accuracy(outputs, targets)
-        accv = acc.item()
+            optimizer.zero_grad()
+            outputs = model(inputs, lengths)
+            # print(inputs.shape,targets.shape, outputs.shape)
+            loss = get_loss(outputs, targets)
+            lossv=loss.item()
+            acc = get_accuracy(outputs, targets)
+            accv = acc.item()
 
-        accuracy_val+=accv
-        avg_loss_val+=lossv
+            accuracy_val+=accv
+            avg_loss_val+=lossv
         
 
-      avg_loss_val/=count
-      accuracy_val/=count  
+        avg_loss_val/=count
+        accuracy_val/=count  
 
 
-      scheduler.step(accuracy_val)
-      #check for max accuracy
-      if accuracy_val > max_val:
-          torch.save(model, save_pth)
-      losses.append(avg_loss)
-      accuracies.append(accuracy_val)
-      # print("EPOCH", epoch, " Loss:", avg_loss, " Acc:", accuracy,  " Val_Loss:", avg_loss_val, "Val_Acc:", accuracy_val)
-      logging.info("EPOCH: " + str(epoch) + " Loss: "+ str(avg_loss)+ " Acc: " + str(accuracy) + " Val_Loss: " + str(avg_loss_val) + " Val_Acc: " + str(accuracy_val))
+        scheduler.step(accuracy_val)
+        #check for max accuracy
+        if accuracy_val > max_val:
+            torch.save(model, save_pth)
+        losses.append(avg_loss)
+        accuracies.append(accuracy_val)
+        # print("EPOCH", epoch, " Loss:", avg_loss, " Acc:", accuracy,  " Val_Loss:", avg_loss_val, "Val_Acc:", accuracy_val)
+        logging.info("EPOCH: " + str(epoch) + " Loss: "+ str(avg_loss)+ " Acc: " + str(accuracy) + " Val_Loss: " + str(avg_loss_val) + " Val_Acc: " + str(accuracy_val))
 
-      #!TODO save losses and accuracies or plot
+        #!TODO save losses and accuracies or plot
 
 def test(model_pth, dataloader_test):
     targs=[]
@@ -161,29 +161,29 @@ if __name__ == '__main__':
     
     dataloader_train, dataloader_val, dataloader_test = get_data(vocab_size,'c')
     model = ChordSequenceModel(input_size, vocab_size, hidden_size)
-    train(model, dataloader_train, dataloader_val,"./model_baseline.pth")
+    train(model, dataloader_train, dataloader_val,"./models/model_baseline.pth")
     # !TODO test
-    test("./model_baseline.pth", dataloader_test)
+    test("./models/model_baseline.pth", dataloader_test)
 
 
     input_size = 25
     dataloader_train, dataloader_val, dataloader_test = get_data(vocab_size,'cd')
     model = ChordSequenceModel(input_size, vocab_size, hidden_size)
-    train(model, dataloader_train, dataloader_val,"./model_duration.pth")
-    test("./model_duration.pth", dataloader_test)
+    train(model, dataloader_train, dataloader_val,"./models/model_duration.pth")
+    test("./models/model_duration.pth", dataloader_test)
 
 
     input_size=36
     dataloader_train, dataloader_val, dataloader_test = get_data(vocab_size,'cm')
     model = ChordSequenceModel(input_size, vocab_size, hidden_size)
-    train(model, dataloader_train, dataloader_val,"./model_melody.pth")
-    test("./model_melody.pth", dataloader_test)
+    train(model, dataloader_train, dataloader_val,"./models/model_melody.pth")
+    test("./models/model_melody.pth", dataloader_test)
 
 
     input_size = 37
     dataloader_train, dataloader_val, dataloader_test = get_data(vocab_size,'cmd')
     model = ChordSequenceModel(input_size, vocab_size, hidden_size)
-    train(model, dataloader_train, dataloader_val,"./model_all.pth")
-    test("./model_all.pth", dataloader_test)
+    train(model, dataloader_train, dataloader_val,"./models/model_all.pth")
+    test("./models/model_all.pth", dataloader_test)
 
 

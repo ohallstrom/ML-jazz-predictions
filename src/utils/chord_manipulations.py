@@ -189,6 +189,7 @@ def create_chord_type_dict(series):
 	:param series: pd.Series containing all chord occurences
 	:return chord_type_dict_sorted: dict of {str, int} mapping chord type to class int,
 	sorted by descending length of keys
+	:return chord_type_dict_inv: dict of {int, str} mapping class int to chord type
 	'''
 	n = series.shape[0]
 
@@ -208,7 +209,10 @@ def create_chord_type_dict(series):
 	# sort dict according to chord_type length
 	chord_type_dict_sorted = {k: chord_type_dict[k] for k in sorted(chord_type_dict, key = lambda k: -len(k))}
 
-	return chord_type_dict_sorted
+	# create inversed dict
+	chord_type_dict_inv = {v: k for k, v in chord_type_dict.items()}
+
+	return chord_type_dict_sorted, chord_type_dict_inv
 
 def add_chord_cols(row, chord_type_dict):
 	'''
