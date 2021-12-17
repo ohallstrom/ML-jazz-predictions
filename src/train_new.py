@@ -59,20 +59,20 @@ if __name__ == '__main__':
 
             # set base parameters
             input_size = input_sizes[arg]
-            hidden_size_l = np.array([300,350])
-            lr_l = np.array([1e-6,1e-4])
-            weight_decay_l = np.array([0,1])
+            hidden_size_l = [300,350]
+            lr_l = [1e-2,1e-1]
+            weight_decay_l = [1e-5,1e-4]
             vocab_size = 157
 
             model_path = 'models/' + arg + '.pth'
             
             dataloader_train, dataloader_val, dataloader_test = get_data(vocab_size, mtypes[arg])
             
-            accuracy_grid = grid_search(dataloader_train, dataloader_val, model_path, lr_l, weight_decay_l, hidden_size_l, input_size, vocab_size)
+            accuracy_grid_val, accuracy_grid_train = grid_search(dataloader_train, dataloader_val, model_path, lr_l, weight_decay_l, hidden_size_l, input_size, vocab_size)
             
+            print(accuracy_grid_val)
+            print(accuracy_grid_train)
             #model = ChordSequenceModel(input_size, vocab_size, hidden_size)
             #train(model, dataloader_train, dataloader_val, model_path)
-
-
 
 
