@@ -28,17 +28,19 @@ mtypes = {
 }
 
 def grid_search(dataloader_train, dataloader_val, save_pth, lr_l,weight_decay_l,hidden_size_l, input_size, vocab_size):
-  """ Does the grid search over the params learning rate (lr), weirght decay and hidden size """
-  accuracy = np.zeros((len(lr_l)),len(weight_decay_l),len(hidden_size_l))
+
+  accuracy = np.zeros(((len(lr_l)),len(weight_decay_l),len(hidden_size_l)))
+  accuracy_train1 = np.zeros(((len(lr_l)),len(weight_decay_l),len(hidden_size_l)))
   for ind_lr, lr in enumerate(lr_l):
     for ind_weight_decay, weight_decay in enumerate(weight_decay_l):
         for ind_hidden_size, hidden_size in enumerate(hidden_size_l):
           model = ChordSequenceModel(input_size, vocab_size, hidden_size)
-          _, accuracies = train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay)
+          _, accuracies, _, accuracy_train = train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay)
 
           accuracy[ind_lr,ind_weight_decay,ind_hidden_size] = accuracies[-1]
+          accuracy_train1[ind_lr,ind_weight_decay,ind_hidden_size] = accuracy_train[-1]
 
-    return accuracy
+  return accuracy, accuracy_train1
 
 
 if __name__ == '__main__':
