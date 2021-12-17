@@ -39,7 +39,7 @@ if __name__ == '__main__':
     melody_clean = melody.copy()
     melody_clean['pitch'] = melody_clean['pitch'].replace(r'^\s*$', np.nan, regex=True)
     melody_clean.dropna(subset=['pitch'],inplace=True)
-    melody_clean['pitch'] = melody_clean['pitch'].apply(lambda x: (x - 36) % 12)
+    melody_clean['pitch'] = melody_clean['pitch'].apply(lambda x: x % 12)
 
     # Filter by melody
     mel_ids = beats_clean['melid'].unique()
@@ -71,4 +71,4 @@ if __name__ == '__main__':
     beats_clean = pd.merge(beats_clean, pitch_df, on=['melid','onset'])
     # correct format of chord_enc
     beats_clean['chord_enc'] = beats_clean['chord_enc'].apply(lambda x: list(x))
-    beats_clean.to_csv('../data/data_preprocessed_4.csv')
+    beats_clean.to_csv('../data/data_preprocessed.csv')
