@@ -1,4 +1,10 @@
-
+'''
+File name: utils.py
+Author: Andrew, Anmol, Oskar
+Date created: 28/11/2021
+Date last modified: 16/12/2021
+Python Version: 3.8
+'''
 import logging
 import numpy as np
 import pickle
@@ -115,10 +121,11 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 		losses.append(avg_loss)
 		losses_val.append(avg_loss_val)
 		accuracies.append(accuracy)
-		accuracies_val.append(accuracies_val)
+		accuracies_val.append(accuracy_val)
 		logging.info("EPOCH: " + str(epoch) + " Loss: "+ str(avg_loss)+ " Acc: " + str(accuracy) + " Val_Loss: " + str(avg_loss_val) + " Val_Acc: " + str(accuracy_val))
 
 		#!TODO save losses and accuracies or plot
+	return losses_val, accuracies_val, losses, accuracies
 
 def test(model_pth, dataloader_test, setup):
 	'''
