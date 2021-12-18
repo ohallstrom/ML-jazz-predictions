@@ -67,7 +67,7 @@ if __name__ == '__main__':
             pitch_vals.append([mel_id, st, bon_l])
 
     pitch_df = pd.DataFrame(pitch_vals, columns=['melid', 'onset','pitch_bow'])
-    print(pitch_df.shape)
+    print(pitch_df.head())
     beats_clean = pd.merge(beats_clean, pitch_df, on=['melid','onset'])
     # correct format of chord_enc
     beats_clean['chord_enc'] = beats_clean['chord_enc'].apply(lambda x: list(x))
