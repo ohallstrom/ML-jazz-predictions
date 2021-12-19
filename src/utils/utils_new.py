@@ -69,10 +69,10 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 		count=0
 		for batch_idx, batch in enumerate(dataloader_train):
 			count+=1
-			inputs = batch["input"].float().to(to)
+			inputs = batch["input"].float().to(device)
 			lengths = batch["length"]
 			# print(lengths)
-			targets = batch["target"][:, :max(lengths)].to(to)  # Pad_packed cuts off at max_length
+			targets = batch["target"][:, :max(lengths)].to(device)  # Pad_packed cuts off at max_length
 
 			optimizer.zero_grad()
 			outputs = model(inputs, lengths)
@@ -95,10 +95,10 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 		model.eval()
 		for batch_idx, batch in enumerate(dataloader_val):
 			count+=1
-			inputs = batch["input"].float().to(to)
+			inputs = batch["input"].float().to(device)
 			lengths = batch["length"]
 			# print(lengths)
-			targets = batch["target"][:, :max(lengths)].to(to)  # Pad_packed cuts off at max_length
+			targets = batch["target"][:, :max(lengths)].to(device)  # Pad_packed cuts off at max_length
 
 			optimizer.zero_grad()
 			outputs = model(inputs, lengths)
@@ -144,10 +144,10 @@ def test(model_pth, dataloader_test, setup):
 	model.eval()
 	for batch_idx, batch in enumerate(dataloader_test):
 		count+=1
-		inputs = batch["input"].float().to(to)
+		inputs = batch["input"].float().to(device)
 		lengths = batch["length"]
 		# print(lengths)
-		targets = batch["target"][:, :max(lengths)].to(to)  # Pad_packed cuts off at max_length
+		targets = batch["target"][:, :max(lengths)].to(device)  # Pad_packed cuts off at max_length
 		# model load model_pth?
 		outputs = model(inputs, lengths)
 
