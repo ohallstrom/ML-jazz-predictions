@@ -139,7 +139,7 @@ def test(model_pth, dataloader_test, setup):
 	accuracy_test=0
 	avg_loss_test=0
 	count=0
-	to = 'cpu'
+	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 	model = torch.load(model_pth)
 	model.eval()
 	for batch_idx, batch in enumerate(dataloader_test):
