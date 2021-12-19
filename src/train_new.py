@@ -30,7 +30,7 @@ mtypes = {
 def grid_search(dataloader_train, dataloader_val, save_pth, lr_l,weight_decay_l,hidden_size_l,drop_l, input_size, vocab_size):
 
   accuracy = np.zeros(((len(lr_l)),len(weight_decay_l),len(hidden_size_l),len(drop_l)))
-  accuracy_train1 = np.zeros(((len(lr_l)),len(weight_decay_l),len(hidden_size_l)))
+  accuracy_train1 = np.zeros(((len(lr_l)),len(weight_decay_l),len(hidden_size_l),len(drop_l)))
   for ind_lr, lr in enumerate(lr_l):
     for ind_weight_decay, weight_decay in enumerate(weight_decay_l):
         for ind_hidden_size, hidden_size in enumerate(hidden_size_l):
