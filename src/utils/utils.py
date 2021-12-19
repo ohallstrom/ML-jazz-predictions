@@ -119,6 +119,7 @@ def train(model, dataloader_train, dataloader_val, save_pth):
 		scheduler.step(accuracy_val)
 		#check for max accuracy
 		if accuracy_val > max_val:
+			max_val=accuracy_val
 			torch.save(model, save_pth)
 		losses.append(avg_loss)
 		losses_val.append(avg_loss_val)
