@@ -51,8 +51,8 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 	:param model: LSTM-model to train
 	:param dataloader: dataloader containing training data
 	'''
-	to = 'cpu' # set to cuda if possible
-	model=model.to(to) 
+	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+	model=model.to(device) 
 	losses = []
 	losses_val = []
 	accuracies_val = []
