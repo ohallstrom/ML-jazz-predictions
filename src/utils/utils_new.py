@@ -92,7 +92,7 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 		accuracy/=count  
 
 		count=0
-
+		model.eval()
 		for batch_idx, batch in enumerate(dataloader_val):
 			count+=1
 			inputs = batch["input"].float().to(to)
