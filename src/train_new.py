@@ -35,7 +35,7 @@ def grid_search(dataloader_train, dataloader_val, save_pth, lr_l,weight_decay_l,
     for ind_weight_decay, weight_decay in enumerate(weight_decay_l):
         for ind_hidden_size, hidden_size in enumerate(hidden_size_l):
             for ind_drop, drop in enumerate(drop_l):
-                model = ChordSequenceModel(input_size, vocab_size, hidden_size)
+                model = ChordSequenceModel(input_size, vocab_size, hidden_size, drop)
                 _, accuracies, _, accuracy_train = train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay)
 
                 accuracy[ind_lr,ind_weight_decay,ind_hidden_size,ind_drop] = accuracies[-1]
