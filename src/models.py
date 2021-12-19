@@ -11,7 +11,7 @@ import torch.nn.functional as F
 
 
 class ChordSequenceModel(nn.Module):
-	def __init__(self, input_size,  vocab_size, lstm_hidden_size):
+	def __init__(self, input_size,  vocab_size, lstm_hidden_size, dropout_param):
 		super().__init__()
 		self.vocab_size = vocab_size 
 		self.input_size = input_size
@@ -25,7 +25,7 @@ class ChordSequenceModel(nn.Module):
 			batch_first=True,
 		)
 		
-		self.dropout = nn.Dropout(0.1)
+		self.dropout_size = dropout_param
 		self.output = nn.Linear(self.lstm_hidden_size, self.vocab_size)
 
 	def forward(self, inputs, lengths):  
