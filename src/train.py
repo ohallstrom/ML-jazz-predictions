@@ -12,6 +12,7 @@ from datetime import datetime
 from models import ChordSequenceModel
 from data import get_data
 from utils.utils import train
+import matplotlib.pyplot as plt
 
 input_sizes = {
     'baseline': 24,
@@ -51,7 +52,23 @@ if __name__ == '__main__':
             
             dataloader_train, dataloader_val, dataloader_test = get_data(vocab_size, mtypes[arg])
             model = ChordSequenceModel(input_size, vocab_size, hidden_size, 0.2)
-            train(model, dataloader_train, dataloader_val, model_path)
+            losses, accuracies, losses_val, accuracies_val = train(model, dataloader_train, dataloader_val, model_path)
+            
+            plt.plot(losses,label = "train loss")
+            plt.plot(losses_val,label = "validation loss")
+            plt.title("train/validation loss versus number of epochs") # set the plot title
+            plt.ylabel("losses") # set the name of the y axis
+            plt.xlabel("epochs")
+            plt.legend()
+            plt.show()
+            
+            plt.plot(accuracies,label = "train accuracy")
+            plt.plot(accuracies_val,label = "validation accuracy")
+            plt.title("train/validation accuracy versus number of epochs") # set the plot title
+            plt.ylabel("accuracies") # set the name of the y axis
+            plt.xlabel("epochs")
+            plt.legend()
+            plt.show()
 
 
 
