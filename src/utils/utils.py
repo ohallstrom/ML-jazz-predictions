@@ -128,6 +128,8 @@ def train(model, dataloader_train, dataloader_val, save_pth):
 		logging.info("EPOCH: " + str(epoch) + " Loss: "+ str(avg_loss)+ " Acc: " + str(accuracy) + " Val_Loss: " + str(avg_loss_val) + " Val_Acc: " + str(accuracy_val))
 
 		#!TODO save losses and accuracies or plot
+		
+	return losses, accuracies, losses_val, accuracies_val
 
 def test(model_pth, dataloader_test, setup):
 	'''
