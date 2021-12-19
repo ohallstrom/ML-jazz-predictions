@@ -16,6 +16,7 @@ class ChordSequenceModel(nn.Module):
 		self.vocab_size = vocab_size 
 		self.input_size = input_size
 		self.lstm_hidden_size = lstm_hidden_size
+		self.dropout_size = dropout_param
 
 		self.lstm = nn.LSTM(
 			self.input_size,
@@ -25,7 +26,8 @@ class ChordSequenceModel(nn.Module):
 			batch_first=True,
 		)
 		
-		self.dropout_size = dropout_param
+		
+		self.dropout = nn.Dropout(dropout_param)
 		self.output = nn.Linear(self.lstm_hidden_size, self.vocab_size)
 
 	def forward(self, inputs, lengths):  
