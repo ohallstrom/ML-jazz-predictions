@@ -58,11 +58,11 @@ def train(model, dataloader_train, dataloader_val, save_pth):
 	losses_val = []
 	accuracies_val = []
 	accuracies = []
-	optimizer = optim.Adam(model.parameters(), lr=0.01, weight_decay=1e-5)
+	optimizer = optim.Adam(model.parameters(), lr=0.01, weight_decay=1e-4)
 	scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,'max',patience=10,verbose=True)
 
 	max_val=0
-	for epoch in range(30):
+	for epoch in range(50):
 		model.train()
 		accuracy=0
 		avg_loss=0
