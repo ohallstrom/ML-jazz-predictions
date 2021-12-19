@@ -50,7 +50,7 @@ if __name__ == '__main__':
             model_path = 'models/' + arg + '.pth'
             
             dataloader_train, dataloader_val, dataloader_test = get_data(vocab_size, mtypes[arg])
-            model = ChordSequenceModel(input_size, vocab_size, hidden_size)
+            model = ChordSequenceModel(input_size, vocab_size, hidden_size, 0.2)
             train(model, dataloader_train, dataloader_val, model_path)
 
 
