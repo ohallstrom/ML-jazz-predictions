@@ -61,7 +61,7 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 	scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,'max',patience=10,verbose=True)
 
 	max_val=0
-	for epoch in range(30):
+	for epoch in range(50):
 		model.train()
 		accuracy=0
 		avg_loss=0
