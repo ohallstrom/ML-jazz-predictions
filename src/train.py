@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
             # set base parameters
             input_size = input_sizes[arg]
-            hidden_size = 300
+            hidden_size = 350
             vocab_size = 157
 
             model_path = 'models/' + arg + '.pth'
