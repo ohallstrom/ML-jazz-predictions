@@ -27,18 +27,19 @@ mtypes = {
     'all': 'cmd'
 }
 
-def grid_search(dataloader_train, dataloader_val, save_pth, lr_l,weight_decay_l,hidden_size_l, input_size, vocab_size):
+def grid_search(dataloader_train, dataloader_val, save_pth, lr_l,weight_decay_l,hidden_size_l,drop_l, input_size, vocab_size):
 
-  accuracy = np.zeros(((len(lr_l)),len(weight_decay_l),len(hidden_size_l)))
+  accuracy = np.zeros(((len(lr_l)),len(weight_decay_l),len(hidden_size_l),len(drop_l)))
   accuracy_train1 = np.zeros(((len(lr_l)),len(weight_decay_l),len(hidden_size_l)))
   for ind_lr, lr in enumerate(lr_l):
     for ind_weight_decay, weight_decay in enumerate(weight_decay_l):
         for ind_hidden_size, hidden_size in enumerate(hidden_size_l):
-          model = ChordSequenceModel(input_size, vocab_size, hidden_size)
-          _, accuracies, _, accuracy_train = train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay)
+            for ind_drop, drop in enumerate(drop_l):
+                model = ChordSequenceModel(input_size, vocab_size, hidden_size)
+                _, accuracies, _, accuracy_train = train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay)
 
-          accuracy[ind_lr,ind_weight_decay,ind_hidden_size] = accuracies[-1]
-          accuracy_train1[ind_lr,ind_weight_decay,ind_hidden_size] = accuracy_train[-1]
+                accuracy[ind_lr,ind_weight_decay,ind_hidden_size,ind_drop] = accuracies[-1]
+                accuracy_train1[ind_lr,ind_weight_decay,ind_hidden_size,ind_drop] = accuracy_train[-1]
 
   return accuracy, accuracy_train1
 
@@ -61,16 +62,17 @@ if __name__ == '__main__':
 
             # set base parameters
             input_size = input_sizes[arg]
-            hidden_size_l = [300,350]
+            hidden_size_l = [300,350,400]
             lr_l = [1e-2,1e-1]
-            weight_decay_l = [1e-5,1e-4]
+            weight_decay_l = [1e-5,1e-4,1e-3]
+            drop_l = [0.1,0.2,0.3]
             vocab_size = 157
 
             model_path = 'models/' + arg + '.pth'
             
             dataloader_train, dataloader_val, dataloader_test = get_data(vocab_size, mtypes[arg])
             
-            accuracy_grid_val, accuracy_grid_train = grid_search(dataloader_train, dataloader_val, model_path, lr_l, weight_decay_l, hidden_size_l, input_size, vocab_size)
+            accuracy_grid_val, accuracy_grid_train = grid_search(dataloader_train, dataloader_val, model_path, lr_l, weight_decay_l, hidden_size_l, drop_l, input_size, vocab_size)
             
             print(accuracy_grid_val)
             print(accuracy_grid_train)
