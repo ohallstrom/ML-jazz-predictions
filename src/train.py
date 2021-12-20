@@ -60,6 +60,7 @@ if __name__ == '__main__':
             plt.ylabel("losses") # set the name of the y axis
             plt.xlabel("epochs")
             plt.legend()
+            plt.save()
             plt.show()
             
             plt.plot(accuracies,label = "train accuracy")
@@ -68,6 +69,7 @@ if __name__ == '__main__':
             plt.ylabel("accuracies") # set the name of the y axis
             plt.xlabel("epochs")
             plt.legend()
+            plt.save()
             plt.show()
 
 
