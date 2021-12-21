@@ -69,7 +69,7 @@ if __name__ == '__main__':
             # set base parameters
             input_size = input_sizes[arg]
             hidden_size_l = [300,350,400]
-            lr_l = [1e-3/2,1e-2,1e-1/2]
+            lr_l = [1e-2]
             weight_decay_l = [1e-5,1e-4,1e-3]
             drop_l = [0.1,0.2,0.3]
             vocab_size = 157
