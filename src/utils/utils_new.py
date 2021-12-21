@@ -61,7 +61,8 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 	scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,'max',patience=10,verbose=True)
 
 	max_val=0
-	for epoch in range(100):
+	last_max_val_epoch = 0
+	for epoch in range(200):
 		model.train()
 		accuracy=0
 		avg_loss=0
@@ -118,7 +119,13 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 		scheduler.step(accuracy_val)
 		#check for max accuracy
 		if accuracy_val > max_val:
+			accuracy_val = max_val
+			last_max_val_epoch = epoch
 			torch.save(model, save_pth)
+		else:
+			if last_max_val_epoch + 9 < epoch:
+				logging.info("Training was stopped at epoch: " + str(epoch))
+				break
 		losses.append(avg_loss)
 		losses_val.append(avg_loss_val)
 		accuracies.append(accuracy)
