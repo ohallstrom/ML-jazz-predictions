@@ -58,11 +58,13 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 	accuracies_val = []
 	accuracies = []
 	optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
-	scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,'max',patience=10,verbose=True)
+	scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,'min',patience=10,verbose=True)
 
 	max_val=0
+	min_val_loss=10000
 	last_max_val_epoch = 0
-	for epoch in range(200):
+	last_min_val_epoch = 0
+	for epoch in range(400):
 		model.train()
 		accuracy=0
 		avg_loss=0
@@ -116,16 +118,26 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 		avg_loss_val/=count
 		accuracy_val/=count  
 
-		scheduler.step(accuracy_val)
+		scheduler.step(avg_loss_val)
 		#check for max accuracy
-		if accuracy_val > max_val:
-			max_val = accuracy_val
-			last_max_val_epoch = epoch
-			max_val_model = model
+		# if accuracy_val > max_val:
+		# 	max_val = accuracy_val
+		# 	last_max_val_epoch = epoch
+		# 	max_val_model = model
+		# else:
+		# 	if last_max_val_epoch + 9 < epoch:
+		# 		logging.info("Training was stopped at epoch: " + str(epoch))
+		# 		break
+
+		if avg_loss_val < min_val_loss:
+			min_val_loss = avg_loss_val
+			last_min_val_epoch = epoch
+			min_loss_model = model
 		else:
-			if last_max_val_epoch + 9 < epoch:
+			if last_min_val_epoch + 20 < epoch:
 				logging.info("Training was stopped at epoch: " + str(epoch))
 				break
+
 		losses.append(avg_loss)
 		losses_val.append(avg_loss_val)
 		accuracies.append(accuracy)
@@ -133,7 +145,7 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 		logging.info("EPOCH: " + str(epoch) + " Loss: "+ str(avg_loss)+ " Acc: " + str(accuracy) + " Val_Loss: " + str(avg_loss_val) + " Val_Acc: " + str(accuracy_val))
 
 		#!TODO save losses and accuracies or plot
-	return losses_val, accuracies_val, losses, accuracies, max_val, max_val_model
+	return losses_val, accuracies_val, losses, accuracies, min_val_loss, min_loss_model
 
 def test(model_pth, dataloader_test, setup):
 	'''
