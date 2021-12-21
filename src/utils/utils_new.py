@@ -62,7 +62,7 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 
 	max_val=0
 	last_max_val_epoch = 0
-	for epoch in range(200):
+	for epoch in range(2):
 		model.train()
 		accuracy=0
 		avg_loss=0
