@@ -128,11 +128,13 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 		# 	if last_max_val_epoch + 9 < epoch:
 		# 		logging.info("Training was stopped at epoch: " + str(epoch))
 		# 		break
+		if max_val < accuracy_val:
+			max_val = accuracy_val
+			max_val_model = model
 
 		if avg_loss_val < min_val_loss:
 			min_val_loss = avg_loss_val
 			last_min_val_epoch = epoch
-			min_loss_model = model
 		else:
 			if last_min_val_epoch + 20 < epoch:
 				logging.info("Training was stopped at epoch: " + str(epoch))
@@ -145,7 +147,7 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 		logging.info("EPOCH: " + str(epoch) + " Loss: "+ str(avg_loss)+ " Acc: " + str(accuracy) + " Val_Loss: " + str(avg_loss_val) + " Val_Acc: " + str(accuracy_val))
 
 		#!TODO save losses and accuracies or plot
-	return losses_val, accuracies_val, losses, accuracies, min_val_loss, min_loss_model
+	return losses_val, accuracies_val, losses, accuracies, max_val, max_val_model
 
 def test(model_pth, dataloader_test, setup):
 	'''
