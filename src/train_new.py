@@ -8,6 +8,7 @@ Python Version: 3.8
 import logging
 import os
 import sys
+import torch
 from datetime import datetime
 from models import ChordSequenceModel
 from data import get_data
