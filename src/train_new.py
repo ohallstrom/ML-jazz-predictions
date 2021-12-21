@@ -68,7 +68,7 @@ if __name__ == '__main__':
             drop_l = [0.1,0.2,0.3]
             vocab_size = 157
 
-            # model_path = 'models/' + arg + '.pth'
+            model_path = 'logs/' + arg + '.pth'
             
             dataloader_train, dataloader_val, dataloader_test = get_data(vocab_size, mtypes[arg])
             
