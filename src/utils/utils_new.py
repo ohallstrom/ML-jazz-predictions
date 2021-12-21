@@ -119,7 +119,7 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 		scheduler.step(accuracy_val)
 		#check for max accuracy
 		if accuracy_val > max_val:
-			accuracy_val = max_val
+			max_val = accuracy_val
 			last_max_val_epoch = epoch
 			torch.save(model, save_pth)
 		else:
