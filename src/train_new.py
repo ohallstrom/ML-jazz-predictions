@@ -37,9 +37,11 @@ def grid_search(dataloader_train, dataloader_val, save_pth, lr_l,weight_decay_l,
     for ind_weight_decay, weight_decay in enumerate(weight_decay_l):
         for ind_hidden_size, hidden_size in enumerate(hidden_size_l):
             for ind_drop, drop in enumerate(drop_l):
+                logging.info("Current hyperparams idxs: " + "lr: " + str(ind_lr) + " weight_decay : " + str(ind_weight_decay)+ " hidden_size: " + str(ind_hidden_size) + " drop_out: " + str(ind_drop))
                 model = ChordSequenceModel(input_size, vocab_size, hidden_size, drop)
                 _, accuracies, _, accuracy_train, max_val, max_val_model = train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay)
                 if max_val > current_max_val:
+                    logging.info("Current hyperparams were found optimal")
                     current_max_val = max_val
                     torch.save(max_val_model, save_pth)
                 accuracy[ind_lr,ind_weight_decay,ind_hidden_size,ind_drop] = accuracies[-1]
