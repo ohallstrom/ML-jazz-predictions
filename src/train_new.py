@@ -31,13 +31,16 @@ def grid_search(dataloader_train, dataloader_val, save_pth, lr_l,weight_decay_l,
 
   accuracy = np.zeros(((len(lr_l)),len(weight_decay_l),len(hidden_size_l),len(drop_l)))
   accuracy_train1 = np.zeros(((len(lr_l)),len(weight_decay_l),len(hidden_size_l),len(drop_l)))
+  current_max_val = 0
   for ind_lr, lr in enumerate(lr_l):
     for ind_weight_decay, weight_decay in enumerate(weight_decay_l):
         for ind_hidden_size, hidden_size in enumerate(hidden_size_l):
             for ind_drop, drop in enumerate(drop_l):
                 model = ChordSequenceModel(input_size, vocab_size, hidden_size, drop)
-                _, accuracies, _, accuracy_train = train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay)
-
+                _, accuracies, _, accuracy_train, max_val, max_val_model = train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay)
+                if max_val > current_max_val:
+                    current_max_val = max_val
+                    torch.save(max_val_model, save_pth)
                 accuracy[ind_lr,ind_weight_decay,ind_hidden_size,ind_drop] = accuracies[-1]
                 accuracy_train1[ind_lr,ind_weight_decay,ind_hidden_size,ind_drop] = accuracy_train[-1]
 
@@ -68,7 +71,7 @@ if __name__ == '__main__':
             drop_l = [0.1,0.2,0.3]
             vocab_size = 157
 
-            model_path = 'logs/' + arg + '.pth'
+            model_path = 'models/' + arg + '.pth'
             
             dataloader_train, dataloader_val, dataloader_test = get_data(vocab_size, mtypes[arg])
             
