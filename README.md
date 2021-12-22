@@ -10,7 +10,7 @@ To install the required libraries, in CLI, run: `pip install -r requirements.txt
 - Data folder contains the preprocessed data in csv format, the predictions of the models as well as the wjazzdb dataset.
 - src - Contains all the python files for training, testing, gridsearch and preprocessing 
 	- logs : Contains the log files for each model. Files generated during train are placed in the folder correponding to the model
-	- models : Contains the saved pretrained models. We save the model with the best loss during training.
+	- models : Contains the saved pretrained models. We save the model with the best validation accuracy during training.
 	- utils : Contains the helper functions for preprocessing, training and testing
 	- data.py : Code to load data during train/test
 	- test_chord_mappings.py : Code to test chord mappings.
