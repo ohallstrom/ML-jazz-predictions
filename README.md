@@ -17,7 +17,7 @@ To install the required libraries, in CLI, run: `pip install -r requirements.txt
 	- preprocess_data.py: Code to generate preprocessed data from raw wjazzdb tables. Generated data is in the data folder
 	- models.py : Code for the ChordSequence Model
 	- gridsearch.py: Code to run gridsearch over model params. Provide as input in CLI, the model name(baseline or melody).
-	- train.py : Code to train model. Provide as input in CLI, the model name(baseline or melody). The plots for training are also generated after it is complete.
+	- train.py : Code to train model. Provide as input in CLI, the model name(baseline or melody). The plots for training are also generated after it is complete. During training, logs are generated in the logs folder and the model is saved in the models folder
 	- test.py : Code to test model. Provide as input in CLI, the model name(baseline or melody). We generate a classification report and also save the results to a csv for analysis.
 	
 
