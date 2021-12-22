@@ -31,11 +31,21 @@ root_mappings_inv = {
 }
 
 def get_loss(outputs, targets):
-	# TODO: add docstring
+	'''	
+	Returns cross entropy loss for lstm predictions
+	:param outputs: the outputs of the lstm
+	:param targets: the ground truth of chords
+	:return: loss
+	'''
 	return F.cross_entropy(outputs.transpose(1, 2), targets, ignore_index=-1)
 
 def get_accuracy(outputs, targets):
-	# TODO: add docstring
+	'''
+	Returns accuracy for lstm
+	:param outputs: the outputs of the lstm
+	:param targets: the ground truth of chords
+	:return: accuracy
+	'''
 	flat_outputs = outputs.argmax(dim=2).flatten()
 	flat_targets = targets.flatten()
 
@@ -45,11 +55,22 @@ def get_accuracy(outputs, targets):
 
 def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 	'''
-	Trains the baseline model
-	during 30 epochs, the results
+	Trains the given model
+	during maximum 400 epochs, the results
 	are saved into a log file.
 	:param model: LSTM-model to train
-	:param dataloader: dataloader containing training data
+	:param dataloader_train: dataloader containing training data
+	:param dataloader_val: dataloader containing validation data
+	:param save_pth: saving path for model
+	:param lr: learning rate
+	:param weight_decay: weight decay
+	:return:
+		- losses_val - list of all validation losses
+		- accuracies_val - list of all validation accuracies
+		- losses - list of all testing losses
+		- accuracies - list of all testing accuracies
+		- max_val - highest validation accuracy
+		- max_val_model - best model in terms of validation accuracy
 	'''
 	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 	model=model.to(device) 
@@ -119,15 +140,7 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 		accuracy_val/=count  
 
 		scheduler.step(avg_loss_val)
-		#check for max accuracy
-		# if accuracy_val > max_val:
-		# 	max_val = accuracy_val
-		# 	last_max_val_epoch = epoch
-		# 	max_val_model = model
-		# else:
-		# 	if last_max_val_epoch + 9 < epoch:
-		# 		logging.info("Training was stopped at epoch: " + str(epoch))
-		# 		break
+
 		if max_val < accuracy_val:
 			max_val = accuracy_val
 			max_val_model = model
@@ -146,12 +159,12 @@ def train(model, dataloader_train, dataloader_val, save_pth, lr, weight_decay):
 		accuracies_val.append(accuracy_val)
 		logging.info("EPOCH: " + str(epoch) + " Loss: "+ str(avg_loss)+ " Acc: " + str(accuracy) + " Val_Loss: " + str(avg_loss_val) + " Val_Acc: " + str(accuracy_val))
 
-		#!TODO save losses and accuracies or plot
 	return losses_val, accuracies_val, losses, accuracies, max_val, max_val_model
 
 def test(model_pth, dataloader_test, setup):
 	'''
-	Tests the given model on the given dataloader
+	Tests the given model on the given dataloader.
+	Writes results to csv
 	:param model_pth: the pth of trained model for the setup
 	:param dataloader_test: dataloader for test data
 	:param setup: string rep of the setup
