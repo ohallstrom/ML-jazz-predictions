@@ -31,11 +31,21 @@ root_mappings_inv = {
 }
 
 def get_loss(outputs, targets):
-	# TODO: add docstring
+	'''	
+	Returns cross entropy loss for lstm predictions
+	:param outputs: the outputs of the lstm
+	:param targets: the ground truth of chords
+	:return: loss
+	'''
 	return F.cross_entropy(outputs.transpose(1, 2), targets, ignore_index=-1)
 
 def get_accuracy(outputs, targets):
-	# TODO: add docstring
+	'''
+	Returns accuracy for lstm
+	:param outputs: the outputs of the lstm
+	:param targets: the ground truth of chords
+	:return: accuracy
+	'''
 	flat_outputs = outputs.argmax(dim=2).flatten()
 	flat_targets = targets.flatten()
 
